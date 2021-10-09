@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.telepathicgrunt.structurefloaters.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "Vec3iAccessor",
+    "worldgen.GravityStructureProcessorMixin",
+    "worldgen.IglooGeneratorPieceMixin",
+    "worldgen.JunglePyramidPieceMixin",
+    "worldgen.OceanMonumentPiecesMonumentBuildingMixin",
+    "worldgen.OceanMonumentPiecesPieceMixin",
+    "worldgen.OceanMonumentStructureMixin",
+    "worldgen.OceanRuinGeneratorPieceMixin",
+    "worldgen.ShipwreckGeneratorPieceMixin",
+    "worldgen.StructureFeatureMixin",
+    "worldgen.StructureMixin",
+    "worldgen.StructurePieceAccessor",
+    "worldgen.StructurePieceMixin",
+    "worldgen.StructurePieceWithDimensionsMixin",
+    "worldgen.StructureStartAccessor",
+    "worldgen.SwampHutPieceMixin",
+    "worldgen.WoodlandMansionFeatureStartMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
