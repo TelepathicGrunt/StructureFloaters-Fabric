@@ -32,12 +32,12 @@ public class StructureFeatureMixin {
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     private <C extends FeatureConfig> void structurefloaters_offsetJigsawStructures(DynamicRegistryManager dynamicRegistryManager, ChunkGenerator generator,
-                                                          BiomeSource biomeSource, StructureManager manager, long worldSeed,
-                                                          ChunkPos pos, Biome biome, int referenceCount, ChunkRandom random,
-                                                          StructureConfig structureConfig, C config, HeightLimitView world,
-                                                          CallbackInfoReturnable<StructureStart<?>> cir, ChunkPos chunkPos,
-                                                          StructureStart<C> structureStart)
+                                                                                    BiomeSource biomeSource, StructureManager manager, long worldSeed,
+                                                                                    ChunkPos pos, Biome biome, int referenceCount, ChunkRandom random,
+                                                                                    StructureConfig structureConfig, C config, HeightLimitView world,
+                                                                                    CallbackInfoReturnable<StructureStart<?>> cir,
+                                                                                    StructureStart<C> structureStart)
     {
-        StructureFloaters.offsetStructurePieces(structureStart);
+        StructureFloaters.offsetStructurePieces(structureStart, generator);
     }
 }

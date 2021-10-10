@@ -36,7 +36,7 @@ public abstract class StructurePieceWithDimensionsMixin extends StructurePiece {
     private void structurefloaters_disableHeightmapSnap(WorldAccess world, BlockBox boundingBox, int height, CallbackInfoReturnable<Boolean> cir,
                                                    int j, int k, BlockPos.Mutable mutable)
     {
-        if(StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
+        if(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 world instanceof ChunkRegion &&
                 ((ChunkRegion)world).toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= ((ChunkRegion)world).toServerWorld().getChunkManager().getChunkGenerator().getMinimumY() &&
                 world.getTopPosition(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, mutable).getY() <= world.getBottomY())
@@ -56,7 +56,7 @@ public abstract class StructurePieceWithDimensionsMixin extends StructurePiece {
     )
     private int structurefloaters_setHeightmapSnap(int heightmapY, WorldAccess world)
     {
-        if(!StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
+        if(!StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 world instanceof ChunkRegion &&
                 ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getMinimumY() &&
                 heightmapY < StructureFloaters.SF_CONFIG.snapStructureToHeight)

@@ -1,5 +1,6 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.StructureFloaters;
 import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +18,7 @@ public class StructureMixin {
 
     /**
      * @author TelepathicGrunt
-     * @reason Prevent template structures from being placed at world bottom if disallowed in config
+     * @reason Prevent template from being placed at world bottom if disallowed in config
      */
     @Inject(
             method = "place(Lnet/minecraft/world/ServerWorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/structure/StructurePlacementData;Ljava/util/Random;I)Z",
@@ -28,7 +29,8 @@ public class StructureMixin {
                                                   StructurePlacementData placementData, Random random, int i,
                                                   CallbackInfoReturnable<Boolean> cir)
     {
-        if(world.toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= world.toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
+        if(StructureFloaters.SF_CONFIG.removeWorldBottomPieces &&
+            world.toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= world.toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
         {
             if(pos.getY() <= world.getBottomY())
             {

@@ -9,8 +9,10 @@ import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.OceanMonumentFeature;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +46,7 @@ public class StructureFloaters implements ModInitializer {
 				.collect(Collectors.toSet());
 	}
 
-	public static <C extends FeatureConfig> void offsetStructurePieces(StructureStart<C> structureStart) {
+	public static <C extends FeatureConfig> void offsetStructurePieces(StructureStart<C> structureStart, ChunkGenerator generator) {
 		if(structureStart instanceof OceanMonumentFeature.Start) {
 			return;
 		}
@@ -54,8 +56,13 @@ public class StructureFloaters implements ModInitializer {
 		}
 
 		OptionalInt minY = structureStart.getChildren().stream().flatMapToInt(piece -> IntStream.of(piece.getBoundingBox().getMinY())).min();
+		if(StructureFloaters.SF_CONFIG.removeStructuresOffIslands && minY.isPresent() && minY.getAsInt() <= generator.getMinimumY()) {
+			structureStart.getChildren().clear();
+			return;
+		}
+
 		minY.ifPresent(y -> {
-			if(!StructureFloaters.SF_CONFIG.removeWorldBottomStructures && y < StructureFloaters.SF_CONFIG.snapStructureToHeight) {
+			if(y < StructureFloaters.SF_CONFIG.snapStructureToHeight) {
 				structureStart.getChildren().forEach(piece -> piece.translate(0, StructureFloaters.SF_CONFIG.snapStructureToHeight - y, 0));
 			}
 		});

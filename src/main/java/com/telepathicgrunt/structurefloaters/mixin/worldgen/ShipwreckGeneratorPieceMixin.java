@@ -2,6 +2,8 @@ package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
 import net.minecraft.structure.ShipwreckGenerator;
+import net.minecraft.structure.StructureManager;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
@@ -11,7 +13,9 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,10 +28,18 @@ import java.util.Random;
 
 
 @Mixin(ShipwreckGenerator.Piece.class)
-public class ShipwreckGeneratorPieceMixin {
+public abstract class ShipwreckGeneratorPieceMixin extends ShipwreckGenerator.Piece {
 
     @Unique
     private static final Identifier SHIPWRECK_ID = new Identifier("minecraft:shipwreck");
+
+    @Final
+    @Shadow
+    private boolean grounded;
+
+    public ShipwreckGeneratorPieceMixin(StructureManager manager, Identifier identifier, BlockPos pos, BlockRotation rotation, boolean grounded) {
+        super(manager, identifier, pos, rotation, grounded);
+    }
 
     /**
      * @author TelepathicGrunt
@@ -44,7 +56,7 @@ public class ShipwreckGeneratorPieceMixin {
                                                    int i, int j)
     {
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
-                StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
+                StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
                 j <= world.getBottomY())
         {
@@ -64,9 +76,11 @@ public class ShipwreckGeneratorPieceMixin {
     private int structurefloaters_setHeightmapSnap(int heightmapY, StructureWorldAccess world,
                                               StructureAccessor structureAccessor, ChunkGenerator chunkGenerator)
     {
+        Heightmap.Type type = this.grounded ? Heightmap.Type.WORLD_SURFACE_WG : Heightmap.Type.OCEAN_FLOOR_WG;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
-                !StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
+                !(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
+                world.getTopY(type, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY()) &&
                 heightmapY < StructureFloaters.SF_CONFIG.snapStructureToHeight)
         {
             return StructureFloaters.SF_CONFIG.snapStructureToHeight;
@@ -90,7 +104,7 @@ public class ShipwreckGeneratorPieceMixin {
                                                     Iterator<BlockPos> var14, BlockPos blockPos2, int l)
     {
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
-                StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
+                StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
                 l <= world.getBottomY())
         {
@@ -111,9 +125,11 @@ public class ShipwreckGeneratorPieceMixin {
     private int structurefloaters_setHeightmapSnap2(int heightmapY, StructureWorldAccess world,
                                               StructureAccessor structureAccessor, ChunkGenerator chunkGenerator)
     {
+        Heightmap.Type type = this.grounded ? Heightmap.Type.WORLD_SURFACE_WG : Heightmap.Type.OCEAN_FLOOR_WG;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
-                !StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
+                !(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
+                        world.getTopY(type, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY()) &&
                 heightmapY < StructureFloaters.SF_CONFIG.snapStructureToHeight)
         {
             return StructureFloaters.SF_CONFIG.snapStructureToHeight;

@@ -32,12 +32,12 @@ public abstract class IglooGeneratorPieceMixin {
             world.toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= world.toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
         {
 
-            if(!StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
+            if(!StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                     y < StructureFloaters.SF_CONFIG.snapStructureToHeight)
             {
                 return StructureFloaters.SF_CONFIG.snapStructureToHeight;
             }
-            else if(StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
+            else if(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                     y <= world.getBottomY() + 1)
             {
                 // Force it to return work bottom so StructureMixin can yeet this igloo piece as otherwise, it would hover a few blocks over world bottom.

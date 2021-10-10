@@ -36,7 +36,6 @@ public abstract class SwampHutPieceMixin {
     private void structurefloaters_fixedYHeight(StructureWorldAccess world, StructureAccessor structureManager, ChunkGenerator chunkGenerator, Random random, BlockBox mutableBoundingBox, ChunkPos chunkPos, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         BlockBox box = ((SwampHutGenerator)(Object)this).getBoundingBox();
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(WITCH_HUT_ID) &&
-                !StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
                 box.getMinY() < StructureFloaters.SF_CONFIG.snapStructureToHeight)
         {

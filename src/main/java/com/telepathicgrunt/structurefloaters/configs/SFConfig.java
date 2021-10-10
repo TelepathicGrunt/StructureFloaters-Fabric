@@ -11,10 +11,18 @@ public class SFConfig implements ConfigData {
     @ConfigEntry.Gui.PrefixText
     @ConfigEntry.Gui.Tooltip(count = 0)
     @Comment(value = """
-             Attempts to remove any nbt piece or structure being place at the bottom of the world.
+             Attempts to remove any nbt piece being place at the bottom of the world.
              Best for floating island terrain
             """)
-    public boolean removeWorldBottomStructures = false;
+    public boolean removeWorldBottomPieces = true;
+
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.Gui.Tooltip(count = 0)
+    @Comment(value = """
+             Attempts to remove any structure being place at the bottom of the world.
+             Best for floating island terrain
+            """)
+    public boolean removeStructuresOffIslands = false;
 
     @ConfigEntry.Gui.PrefixText
     @ConfigEntry.Gui.Tooltip(count = 0)

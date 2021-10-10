@@ -36,7 +36,6 @@ public abstract class JunglePyramidPieceMixin {
     private void structurefloaters_fixedYHeight(StructureWorldAccess world, StructureAccessor structureManager, ChunkGenerator chunkGenerator, Random random, BlockBox mutableBoundingBox, ChunkPos chunkPos, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         BlockBox box = ((JungleTempleGenerator)(Object)this).getBoundingBox();
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(JUNGLE_PYRAMID_ID) &&
-            !StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
             box.getMinY() < StructureFloaters.SF_CONFIG.snapStructureToHeight)
         {

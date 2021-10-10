@@ -2,15 +2,22 @@ package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
 import net.minecraft.structure.OceanRuinGenerator;
+import net.minecraft.structure.SimpleStructurePiece;
+import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructurePieceType;
+import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.ChunkRegion;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.feature.OceanRuinFeature;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,10 +30,15 @@ import java.util.Random;
 
 
 @Mixin(OceanRuinGenerator.Piece.class)
-public class OceanRuinGeneratorPieceMixin {
+public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece {
 
     @Unique
     private static final Identifier OCEAN_RUINS_ID = new Identifier("minecraft:ocean_ruin");
+
+    public OceanRuinGeneratorPieceMixin(StructurePieceType type, int i, StructureManager structureManager, Identifier identifier, String string, StructurePlacementData placementData, BlockPos pos) {
+        super(type, i, structureManager, identifier, string, placementData, pos);
+    }
+
 
     /**
      * @author TelepathicGrunt
@@ -43,7 +55,7 @@ public class OceanRuinGeneratorPieceMixin {
                                                    int heightmapY)
     {
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(OCEAN_RUINS_ID) &&
-                StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
+                StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
                 heightmapY <= world.getBottomY())
         {
@@ -61,11 +73,12 @@ public class OceanRuinGeneratorPieceMixin {
             ordinal = 0
     )
     private int structurefloaters_setHeightmapSnap(int heightmapY, StructureWorldAccess world,
-                                              StructureAccessor structureAccessor, ChunkGenerator chunkGenerator)
+                                                   StructureAccessor structureAccessor, ChunkGenerator chunkGenerator)
     {
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(OCEAN_RUINS_ID) &&
-            !StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
+            !(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
+                    world.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY()) &&
             heightmapY < StructureFloaters.SF_CONFIG.snapStructureToHeight)
         {
             return StructureFloaters.SF_CONFIG.snapStructureToHeight;
@@ -82,23 +95,23 @@ public class OceanRuinGeneratorPieceMixin {
             at = @At(value = "INVOKE_ASSIGN", target = "Ljava/lang/Math;abs(I)I", remap = false),
             cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void structurefloaters_disableHeightmapSnap2(BlockPos start, BlockView world, BlockPos end, CallbackInfoReturnable<Integer> cir,
-                                                    int i, int j)
+    private void structurefloaters_disableHeightmapSnap2(BlockPos start, BlockView world, BlockPos end,
+                                                         CallbackInfoReturnable<Integer> cir,
+                                                         int i, int j)
     {
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(OCEAN_RUINS_ID) &&
             world instanceof ChunkRegion &&
             ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
         {
-            if(!StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
-                    j < StructureFloaters.SF_CONFIG.snapStructureToHeight)
-            {
-                cir.setReturnValue(StructureFloaters.SF_CONFIG.snapStructureToHeight);
-            }
-            else if(StructureFloaters.SF_CONFIG.removeWorldBottomStructures &&
+            if(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                     j <= world.getBottomY() + 1)
             {
                 // Force it to return work bottom so StructureMixin can yeet this ocean ruins piece as otherwise, it would hover a few blocks over world bottom.
                 cir.setReturnValue(world.getBottomY());
+            }
+            else if(j < StructureFloaters.SF_CONFIG.snapStructureToHeight)
+            {
+                cir.setReturnValue(StructureFloaters.SF_CONFIG.snapStructureToHeight);
             }
         }
     }
