@@ -2,7 +2,10 @@ package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
 import net.minecraft.structure.ShipwreckGenerator;
+import net.minecraft.structure.SimpleStructurePiece;
 import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructurePieceType;
+import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
@@ -28,7 +31,7 @@ import java.util.Random;
 
 
 @Mixin(ShipwreckGenerator.Piece.class)
-public abstract class ShipwreckGeneratorPieceMixin extends ShipwreckGenerator.Piece {
+public abstract class ShipwreckGeneratorPieceMixin extends SimpleStructurePiece {
 
     @Unique
     private static final Identifier SHIPWRECK_ID = new Identifier("minecraft:shipwreck");
@@ -37,9 +40,10 @@ public abstract class ShipwreckGeneratorPieceMixin extends ShipwreckGenerator.Pi
     @Shadow
     private boolean grounded;
 
-    public ShipwreckGeneratorPieceMixin(StructureManager manager, Identifier identifier, BlockPos pos, BlockRotation rotation, boolean grounded) {
-        super(manager, identifier, pos, rotation, grounded);
+    public ShipwreckGeneratorPieceMixin(StructurePieceType type, int i, StructureManager structureManager, Identifier identifier, String string, StructurePlacementData placementData, BlockPos pos) {
+        super(type, i, structureManager, identifier, string, placementData, pos);
     }
+
 
     /**
      * @author TelepathicGrunt
