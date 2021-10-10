@@ -30,6 +30,7 @@ public class StructureFloaters implements ModInitializer {
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 	public static SFConfig SF_CONFIG;
 	public static Set<Identifier> STRUCTURES_TO_IGNORE;
+	public static Set<Identifier> STRUCTURES_TO_RAISE_PIECES_INDIVIDUALLY;
 	//public static final WBDimensionOmegaConfigs omegaConfig = OmegaConfig.register(WBDimensionOmegaConfigs.class);
 
 	@Override
@@ -38,10 +39,18 @@ public class StructureFloaters implements ModInitializer {
 		AutoConfig.register(SFConfig.class, JanksonConfigSerializer::new);
 		SF_CONFIG = AutoConfig.getConfigHolder(SFConfig.class).getConfig();
 		STRUCTURES_TO_IGNORE = Arrays.stream(SF_CONFIG.structureToIgnore
-				.toLowerCase(Locale.ROOT)
-				.replace(" ", "")
-				.replace("	", "")
-				.split(","))
+						.toLowerCase(Locale.ROOT)
+						.replace(" ", "")
+						.replace("	", "")
+						.split(","))
+				.map(Identifier::new)
+				.collect(Collectors.toSet());
+
+		STRUCTURES_TO_RAISE_PIECES_INDIVIDUALLY = Arrays.stream(SF_CONFIG.structureToRaiseEachPieceSeparately
+						.toLowerCase(Locale.ROOT)
+						.replace(" ", "")
+						.replace("	", "")
+						.split(","))
 				.map(Identifier::new)
 				.collect(Collectors.toSet());
 	}
@@ -51,7 +60,8 @@ public class StructureFloaters implements ModInitializer {
 			return;
 		}
 
-		if(STRUCTURES_TO_IGNORE.contains(Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature()))) {
+		Identifier structureID = Registry.STRUCTURE_FEATURE.getId(structureStart.getFeature());
+		if(STRUCTURES_TO_IGNORE.contains(structureID)) {
 			return;
 		}
 
@@ -61,9 +71,19 @@ public class StructureFloaters implements ModInitializer {
 			return;
 		}
 
+		boolean raisePiecesSeparately = STRUCTURES_TO_RAISE_PIECES_INDIVIDUALLY.contains(structureID);
 		minY.ifPresent(y -> {
 			if(y < StructureFloaters.SF_CONFIG.snapStructureToHeight) {
-				structureStart.getChildren().forEach(piece -> piece.translate(0, StructureFloaters.SF_CONFIG.snapStructureToHeight - y, 0));
+				structureStart.getChildren().forEach(piece -> {
+					if(raisePiecesSeparately) {
+						if(piece.getBoundingBox().getMinY() <= generator.getMinimumY()) {
+							piece.translate(0, StructureFloaters.SF_CONFIG.snapStructureToHeight - piece.getBoundingBox().getMinY(), 0);
+						}
+					}
+					else {
+						piece.translate(0, StructureFloaters.SF_CONFIG.snapStructureToHeight - y, 0);
+					}
+				});
 			}
 		});
 	}

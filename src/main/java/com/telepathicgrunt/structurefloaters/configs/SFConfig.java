@@ -45,4 +45,12 @@ public class SFConfig implements ConfigData {
              structures to ignore modifying the height of
             """)
     public String structureToIgnore = "minecraft:stronghold,minecraft:mineshaft,minecraft:buried_treasure,minecraft:monument";
+
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.Gui.Tooltip(count = 0)
+    @Comment(value = """
+             Raises up the pieces of the structure to the snapStructureToHeight without affecting the pieces already or above snapStructureToHeight.
+             Think villages where each house is separate from each other and can be at different heights.
+            """)
+    public String structureToRaiseEachPieceSeparately = "minecraft:village,minecraft:pillager_outpost";
 }
