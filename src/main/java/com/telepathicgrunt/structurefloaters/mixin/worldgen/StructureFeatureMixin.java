@@ -19,9 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
-
 
 @Mixin(StructureFeature.class)
 public class StructureFeatureMixin {

@@ -6,7 +6,6 @@ import net.minecraft.structure.StructurePieceType;
 import net.minecraft.structure.StructurePieceWithDimensions;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.WorldAccess;

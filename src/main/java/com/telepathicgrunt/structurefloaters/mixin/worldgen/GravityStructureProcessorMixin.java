@@ -1,19 +1,12 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
-import net.minecraft.structure.Structure;
-import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.structure.processor.GravityStructureProcessor;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Random;
 
 
 @Mixin(GravityStructureProcessor.class)

@@ -5,19 +5,17 @@ import com.telepathicgrunt.structurefloaters.mixin.worldgen.StructurePieceAccess
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.structure.OceanMonumentGenerator;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.OceanMonumentFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.OptionalInt;
@@ -67,8 +65,12 @@ public class StructureFloaters implements ModInitializer {
 		if(StructureFloaters.SF_CONFIG.removeStructurePillars &&
 				world.toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= world.toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
 		{
-			int heightmapY = world.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, ((StructurePieceAccessor)piece).structurefloaters_callApplyXTransform(x, z), ((StructurePieceAccessor)piece).structurefloaters_callApplyZTransform(x, z));
-			if(heightmapY <= world.getBottomY() + 2 || heightmapY > y){
+			int trueX = ((StructurePieceAccessor)piece).structurefloaters_callApplyXTransform(x, z);
+			int trueZ = ((StructurePieceAccessor)piece).structurefloaters_callApplyZTransform(x, z);
+			int trueY = ((StructurePieceAccessor)piece).structurefloaters_callApplyYTransform(y);
+			int heightmapY = GeneralUtils.getFirstLandYFromPos(world, new BlockPos(trueX, trueY, trueZ), GeneralUtils::isReplaceableByStructures);
+
+			if(heightmapY <= world.getBottomY()){
 				return true;
 			}
 		}

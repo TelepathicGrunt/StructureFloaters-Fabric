@@ -1,7 +1,5 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
-import com.telepathicgrunt.structurefloaters.StructureFloaters;
-import com.telepathicgrunt.structurefloaters.mixin.Vec3iAccessor;
 import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.util.math.BlockPos;
