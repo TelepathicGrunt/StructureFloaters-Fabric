@@ -16,6 +16,7 @@ import net.minecraft.world.gen.feature.StructureFeature;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -28,6 +29,10 @@ public class StructureFeatureMixin {
      */
     @Inject(
             method = "tryPlaceStart(Lnet/minecraft/util/registry/DynamicRegistryManager;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/world/biome/source/BiomeSource;Lnet/minecraft/structure/StructureManager;JLnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/biome/Biome;ILnet/minecraft/world/gen/ChunkRandom;Lnet/minecraft/world/gen/chunk/StructureConfig;Lnet/minecraft/world/gen/feature/FeatureConfig;Lnet/minecraft/world/HeightLimitView;)Lnet/minecraft/structure/StructureStart;",
+            slice = @Slice(
+                    from = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/StructureFeature;createStart(Lnet/minecraft/util/math/ChunkPos;IJ)Lnet/minecraft/structure/StructureStart;"),
+                    to = @At(value = "INVOKE", target = "Lnet/minecraft/structure/StructureStart;hasChildren()Z")
+            ),
             at = @At(value = "INVOKE", target = "net/minecraft/structure/StructureStart.init(Lnet/minecraft/util/registry/DynamicRegistryManager;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/structure/StructureManager;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/biome/Biome;Lnet/minecraft/world/gen/feature/FeatureConfig;Lnet/minecraft/world/HeightLimitView;)V", shift = At.Shift.AFTER),
             locals = LocalCapture.CAPTURE_FAILHARD
     )
@@ -35,7 +40,7 @@ public class StructureFeatureMixin {
                                                                                     BiomeSource biomeSource, StructureManager manager, long worldSeed,
                                                                                     ChunkPos pos, Biome biome, int referenceCount, ChunkRandom random,
                                                                                     StructureConfig structureConfig, C config, HeightLimitView world,
-                                                                                    CallbackInfoReturnable<StructureStart<?>> cir,
+                                                                                    CallbackInfoReturnable<StructureStart<?>> cir, ChunkPos chunkPos,
                                                                                     StructureStart<C> structureStart)
     {
         StructureFloaters.offsetStructurePieces(structureStart, generator);
