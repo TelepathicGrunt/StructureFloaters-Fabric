@@ -50,10 +50,10 @@ dependencies {
 	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 	modImplementation ("curse.maven:awesome_dungeons-530309:3476685") { transitive = false }
 	modImplementation ("curse.maven:when_dungeons_arise-511812:3414936") { transitive = false }
-	modImplementation ("curse.maven:besses_of_mass_destruction-438365:3407406") { transitive = false }
-	modImplementation ("io.github.onyxstudios:Cardinal-Components-API:4.0.0-alpha.1+21w37a") { transitive = false }
-	modImplementation ("net.fabricmc:fabric-language-kotlin:1.6.5+kotlin.1.5.31") { transitive = false }
-	modImplementation ('software.bernie.geckolib:geckolib-fabric-1.17:3.0.13:dev') { transitive = false }
+	modImplementation ("curse.maven:bosses_of_mass_destruction-438365:3407406") { transitive = true }
+	modImplementation "io.github.onyxstudios:Cardinal-Components-API:3.0.0"
+	modImplementation "net.fabricmc:fabric-language-kotlin:1.6.5+kotlin.1.5.31"
+	modImplementation "software.bernie.geckolib:geckolib-fabric-1.17:3.0.13:dev"
 }
 
 apply from: 'gradle/processresources.gradle'
