@@ -5,8 +5,10 @@ import com.telepathicgrunt.structurefloaters.mixin.worldgen.StructurePieceAccess
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.structure.PoolStructurePiece;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
+import net.minecraft.structure.pool.StructurePool;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -15,6 +17,7 @@ import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.OceanMonumentFeature;
+import net.minecraft.world.gen.feature.StructureFeature;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,7 +59,7 @@ public class StructureFloaters implements ModInitializer {
 	}
 
 	public static <C extends FeatureConfig> void offsetStructurePieces(StructureStart<C> structureStart, ChunkGenerator generator) {
-		if(structureStart instanceof OceanMonumentFeature.Start) {
+		if(structureStart.getFeature() == StructureFeature.MONUMENT) {
 			return;
 		}
 
@@ -76,8 +79,11 @@ public class StructureFloaters implements ModInitializer {
 			if(y < StructureFloaters.SF_CONFIG.snapStructureToHeight) {
 				structureStart.getChildren().forEach(piece -> {
 					if(raisePiecesSeparately) {
-						if(piece.getBoundingBox().getMinY() <= generator.getMinimumY()) {
+						if(piece.getBoundingBox().getMinY() <= StructureFloaters.SF_CONFIG.snapStructureToHeight) {
 							piece.translate(0, StructureFloaters.SF_CONFIG.snapStructureToHeight - piece.getBoundingBox().getMinY(), 0);
+							if(piece instanceof PoolStructurePiece poolStructurePiece) {
+								poolStructurePiece.getPoolElement().setProjection(StructurePool.Projection.RIGID);
+							}
 						}
 					}
 					else {

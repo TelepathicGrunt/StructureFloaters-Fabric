@@ -23,8 +23,7 @@ public class StructurePieceMixin {
             at = @At(value = "HEAD"),
             cancellable = true
     )
-    private void structurefloaters_disablePillars(StructureWorldAccess world, BlockState state, int x, int y, int z, BlockBox box, CallbackInfo ci)
-    {
+    private void structurefloaters_disablePillars(StructureWorldAccess world, BlockState state, int x, int y, int z, BlockBox box, CallbackInfo ci) {
         if(StructureFloaters.cancelPillars(world, ((StructurePiece)(Object)this), x, y, z)){
             ci.cancel();
         }

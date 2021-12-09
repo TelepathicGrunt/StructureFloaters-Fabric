@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -45,21 +46,20 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
      * @reason Prevent structures from being placed at world bottom if disallowed in config
      */
     @Inject(
-            method = "generate(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)Z",
+            method = "generate(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)V",
             at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/StructureWorldAccess;getTopY(Lnet/minecraft/world/Heightmap$Type;II)I", ordinal = 0),
             cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD
     )
     private void structurefloaters_disableHeightmapSnap(StructureWorldAccess world, StructureAccessor structureAccessor,
                                                    ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox,
-                                                   ChunkPos chunkPos, BlockPos pos, CallbackInfoReturnable<Boolean> cir,
-                                                   int heightmapY)
+                                                   ChunkPos chunkPos, BlockPos pos, CallbackInfo ci, int heightmapY)
     {
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(OCEAN_RUINS_ID) &&
                 StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
-                heightmapY <= world.getBottomY())
+                heightmapY <= world.getBottomY() + 1)
         {
-            cir.setReturnValue(false);
+            ci.cancel();
         }
     }
 
@@ -68,7 +68,7 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
      * @reason Prevent structures from being placed at world bottom if disallowed in config
      */
     @ModifyVariable(
-            method = "generate(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)Z",
+            method = "generate(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/util/math/BlockPos;)V",
             at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/StructureWorldAccess;getTopY(Lnet/minecraft/world/Heightmap$Type;II)I", ordinal = 0),
             ordinal = 0
     )
@@ -78,7 +78,7 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(OCEAN_RUINS_ID) &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
             !(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
-                    world.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY()) &&
+                    world.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY() + 1) &&
             heightmapY < StructureFloaters.SF_CONFIG.snapStructureToHeight)
         {
             return StructureFloaters.SF_CONFIG.snapStructureToHeight;
@@ -107,7 +107,7 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
                     j <= world.getBottomY() + 1)
             {
                 // Force it to return work bottom so StructureMixin can yeet this ocean ruins piece as otherwise, it would hover a few blocks over world bottom.
-                cir.setReturnValue(world.getBottomY());
+                cir.setReturnValue(world.getBottomY() - 1);
             }
             else if(j < StructureFloaters.SF_CONFIG.snapStructureToHeight)
             {

@@ -3,6 +3,7 @@ package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
 import com.telepathicgrunt.structurefloaters.mixin.Vec3iAccessor;
+import net.minecraft.structure.StructurePiecesList;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -18,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Random;
 
-@Mixin(WoodlandMansionFeature.Start.class)
+@Mixin(WoodlandMansionFeature.class)
 public abstract class WoodlandMansionFeatureStartMixin {
     
     /**
@@ -26,19 +27,20 @@ public abstract class WoodlandMansionFeatureStartMixin {
      * @reason fixed mansion pillar
      */
     @Inject(
-            method = "generateStructure(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;)V",
+            method = "postPlace(Lnet/minecraft/world/StructureWorldAccess;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/Random;Lnet/minecraft/util/math/BlockBox;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/structure/StructurePiecesList;)V",
             at = @At(target = "Lnet/minecraft/world/StructureWorldAccess;isAir(Lnet/minecraft/util/math/BlockPos;)Z", value = "INVOKE", ordinal = 0),
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void structurefloaters_removePillar(StructureWorldAccess world, StructureAccessor structureAccessor,
-                                                ChunkGenerator chunkGenerator, Random random, BlockBox box,
-                                                ChunkPos chunkPos, CallbackInfo ci, BlockBox blockBox,
-                                                int y, int x, int z, BlockPos blockPos) {
+    private static void structurefloaters_removePillar(StructureWorldAccess world, StructureAccessor structureAccessor,
+                                                       ChunkGenerator chunkGenerator, Random random, BlockBox box,
+                                                       ChunkPos chunkPos, StructurePiecesList children, CallbackInfo ci,
+                                                       BlockPos.Mutable mutable, int worldBottom, BlockBox blockBox,
+                                                       int minBBY, int x, int z) {
         if(StructureFloaters.SF_CONFIG.removeStructurePillars &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
-            GeneralUtils.getFirstLandYFromPos(world, new BlockPos(x, y - 1, z), GeneralUtils::isReplaceableByMansions) <= world.getBottomY() + 1)
+            GeneralUtils.getFirstLandYFromPos(world, new BlockPos(x, minBBY - 1, z), GeneralUtils::isReplaceableByMansions) <= worldBottom + 1)
         {
-            ((Vec3iAccessor)blockPos).sf_setY(world.getBottomY() - 5);
+            ((Vec3iAccessor)mutable).sf_setY(world.getBottomY() - 5);
         }
     }
 }

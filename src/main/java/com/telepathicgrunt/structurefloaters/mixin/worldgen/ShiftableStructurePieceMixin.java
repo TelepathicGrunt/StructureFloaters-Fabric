@@ -1,9 +1,11 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import net.minecraft.structure.ShiftableStructurePiece;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructurePieceType;
-import net.minecraft.structure.StructurePieceWithDimensions;
+import net.minecraft.structure.StructurePiecesCollector;
+import net.minecraft.structure.StructurePiecesHolder;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
@@ -17,10 +19,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 
-@Mixin(StructurePieceWithDimensions.class)
-public abstract class StructurePieceWithDimensionsMixin extends StructurePiece {
+@Mixin(ShiftableStructurePiece.class)
+public abstract class ShiftableStructurePieceMixin extends StructurePiece {
 
-    protected StructurePieceWithDimensionsMixin(StructurePieceType type, int length, BlockBox boundingBox) {
+    protected ShiftableStructurePieceMixin(StructurePieceType type, int length, BlockBox boundingBox) {
         super(type, length, boundingBox);
     }
 
@@ -29,7 +31,7 @@ public abstract class StructurePieceWithDimensionsMixin extends StructurePiece {
      * @reason Prevent structures from being placed at world bottom if disallowed in config
      */
     @Inject(
-            method = "method_14839(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockBox;I)Z",
+            method = "adjustToAverageHeight(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockBox;I)Z",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldAccess;getTopPosition(Lnet/minecraft/world/Heightmap$Type;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/math/BlockPos;"),
             cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD
     )
@@ -50,10 +52,9 @@ public abstract class StructurePieceWithDimensionsMixin extends StructurePiece {
      * @reason Prevent structures from being placed at world bottom if disallowed in config
      */
     @ModifyVariable(
-            method = "method_14839(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockBox;I)Z",
-            at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/WorldAccess;getTopPosition(Lnet/minecraft/world/Heightmap$Type;Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/util/math/BlockPos;"),
-            ordinal = 0
-    )
+            method = "adjustToMinHeight(Lnet/minecraft/world/WorldAccess;I)Z",
+            at = @At(value = "INVOKE_ASSIGN", target = "Ljava/lang/Math;min(II)I"),
+            index = 3)
     private int structurefloaters_setHeightmapSnap(int heightmapY, WorldAccess world)
     {
         if(!StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
