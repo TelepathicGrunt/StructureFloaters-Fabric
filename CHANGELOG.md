@@ -1,3 +1,9 @@
+### **(V.2.0.1 Changes) (1.18.1 Minecraft)**
+
+##### Misc:
+Bumped mixin compatibility level to java 17
+
+
 ### **(V.2.0.0 Changes) (1.18.0 Minecraft)**
 
 ##### Misc:

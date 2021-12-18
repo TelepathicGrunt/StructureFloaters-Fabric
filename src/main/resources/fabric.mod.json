@@ -14,7 +14,7 @@
   },
 
   "license": "LGPLv3",
-  "icon": "",
+  "icon": " ",
 
   "environment": "*",
   "entrypoints": {
@@ -30,9 +30,9 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.10.6",
+    "fabricloader": ">=0.12.0",
     "fabric": ">=0.25.0",
-    "minecraft": ">=1.16.2",
+    "minecraft": ">=1.18.0",
     "cloth-config2": ">=4.11.0"
   }
 }
