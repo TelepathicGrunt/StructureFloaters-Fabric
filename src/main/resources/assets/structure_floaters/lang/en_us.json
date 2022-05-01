@@ -1,0 +1,14 @@
+{
+    "text.autoconfig.structure_floaters.option.removeWorldBottomPieces": "Remove World Bottom Pieces",
+    "text.autoconfig.structure_floaters.option.removeWorldBottomPieces.@PrefixText": "\nAttempts to remove any nbt piece being place at the bottom of the world.\nBest for floating island terrain",
+    "text.autoconfig.structure_floaters.option.removeStructuresOffIslands": "Remove Structures Off Islands",
+    "text.autoconfig.structure_floaters.option.removeStructuresOffIslands.@PrefixText": "\nAttempts to remove any structure being place at the bottom of the world.\nBest for floating island terrain",
+    "text.autoconfig.structure_floaters.option.removeStructurePillars": "Remove Structure Pillars",
+    "text.autoconfig.structure_floaters.option.removeStructurePillars.@PrefixText": "\nAttempts to remove the pillars from nether fortress and desert temples and the likes.\nBest for floating island terrain",
+    "text.autoconfig.structure_floaters.option.snapStructureToHeight": "Snap Structure To Height",
+    "text.autoconfig.structure_floaters.option.snapStructureToHeight.@PrefixText": "\nAttempts to move structure to a specific height. Only applies if removeWorldBottomStructures is false.",
+    "text.autoconfig.structure_floaters.option.configuredStructures": "ConfiguredStructures To Ignore",
+    "text.autoconfig.structure_floaters.option.configuredStructures.@PrefixText": "\nConfigured structures to ignore modifying the height of.",
+    "text.autoconfig.structure_floaters.option.configuredStructuresToRaiseEachPieceSeparately": "Configured Structures To Raise Each Piece Separately",
+    "text.autoconfig.structure_floaters.option.configuredStructuresToRaiseEachPieceSeparately.@PrefixText": "\nRaises up the pieces of the configured structure to the snapStructureToHeight without affecting the pieces already or above snapStructureToHeight.\nThink villages where each house is separate from each other and can be at different heights."
+}

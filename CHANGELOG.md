@@ -1,3 +1,23 @@
+### **(V.3.0.0 Changes) (1.18.2 Minecraft)**
+
+##### Misc:
+Updated to 1.18.2
+
+
+### **(V.2.0.1 Changes) (1.18.1 Minecraft)**
+
+##### Misc:
+Bumped mixin compatibility level to java 17
+
+
+### **(V.2.0.0 Changes) (1.18.0 Minecraft)**
+
+##### Misc:
+Ported to 1.18
+
+Terrain matching pieces like roads will be set to rigid if they are below the snapStructureToHeight config
+
+
 ### **(V.1.3.0 Changes) (1.17.1 Minecraft)**
 
 ##### Misc:
