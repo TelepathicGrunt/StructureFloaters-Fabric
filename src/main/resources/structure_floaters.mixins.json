@@ -14,7 +14,7 @@
     "worldgen.OceanRuinGeneratorPieceMixin",
     "worldgen.ShiftableStructurePieceMixin",
     "worldgen.ShipwreckGeneratorPieceMixin",
-    "worldgen.StructureFeatureMixin",
+    "worldgen.ConfiguredStructureFeatureMixin",
     "worldgen.StructureMixin",
     "worldgen.StructurePieceAccessor",
     "worldgen.StructurePieceMixin",

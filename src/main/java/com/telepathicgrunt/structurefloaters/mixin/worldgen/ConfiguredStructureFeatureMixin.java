@@ -11,7 +11,7 @@ import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.chunk.StructureConfig;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.gen.feature.FeatureConfig;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.random.ChunkRandom;
@@ -25,26 +25,26 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 
-@Mixin(StructureFeature.class)
-public class StructureFeatureMixin {
+@Mixin(ConfiguredStructureFeature.class)
+public class ConfiguredStructureFeatureMixin {
 
     /**
      * @author TelepathicGrunt
      */
     @Inject(
-            method = "tryPlaceStart(Lnet/minecraft/util/registry/DynamicRegistryManager;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/world/biome/source/BiomeSource;Lnet/minecraft/structure/StructureManager;JLnet/minecraft/util/math/ChunkPos;ILnet/minecraft/world/gen/chunk/StructureConfig;Lnet/minecraft/world/gen/feature/FeatureConfig;Lnet/minecraft/world/HeightLimitView;Ljava/util/function/Predicate;)Lnet/minecraft/structure/StructureStart;",
+            method = "tryPlaceStart(Lnet/minecraft/util/registry/DynamicRegistryManager;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/world/biome/source/BiomeSource;Lnet/minecraft/structure/StructureManager;JLnet/minecraft/util/math/ChunkPos;ILnet/minecraft/world/HeightLimitView;Ljava/util/function/Predicate;)Lnet/minecraft/structure/StructureStart;",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/structure/StructureStart;hasChildren()Z"),
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     private <C extends FeatureConfig> void structurefloaters_offsetJigsawStructures(DynamicRegistryManager registryManager, ChunkGenerator chunkGenerator,
                                                                                     BiomeSource biomeSource, StructureManager structureManager,
                                                                                     long worldSeed, ChunkPos pos, int structureReferences,
-                                                                                    StructureConfig structureConfig, C config, HeightLimitView world,
-                                                                                    Predicate<Biome> biomePredicate, CallbackInfoReturnable<StructureStart<?>> cir,
-                                                                                    ChunkPos chunkPos, Optional<StructurePiecesGenerator<C>> optional,
+                                                                                    HeightLimitView world, Predicate<Biome> biomePredicate,
+                                                                                    CallbackInfoReturnable<StructureStart> cir,
+                                                                                    Optional<StructurePiecesGenerator<C>> optional,
                                                                                     StructurePiecesCollector structurePiecesCollector,
-                                                                                    ChunkRandom chunkRandom, StructureStart<C> structureStart)
+                                                                                    ChunkRandom chunkRandom, StructureStart structureStart)
     {
-        StructureFloaters.offsetStructurePieces(structureStart, chunkGenerator);
+        StructureFloaters.offsetStructurePieces(registryManager, structureStart, chunkGenerator);
     }
 }
