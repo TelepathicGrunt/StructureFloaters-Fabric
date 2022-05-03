@@ -1,3 +1,9 @@
+### **(V.3.0.1 Changes) (1.18.2 Minecraft)**
+
+##### Monuments:
+Fixed Ocean Monuments spawning in any biome in any dimension that has sea level below world bottom.
+
+
 ### **(V.3.0.0 Changes) (1.18.2 Minecraft)**
 
 ##### Misc:
