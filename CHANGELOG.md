@@ -1,3 +1,9 @@
+### **(V.3.0.2 Changes) (1.18.2 Minecraft)**
+
+##### Mod Compat:
+Added workaround for crash with Create's ponder system
+
+
 ### **(V.3.0.1 Changes) (1.18.2 Minecraft)**
 
 ##### Monuments:
