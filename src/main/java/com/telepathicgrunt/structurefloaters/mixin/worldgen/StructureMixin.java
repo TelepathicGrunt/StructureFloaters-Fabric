@@ -30,6 +30,8 @@ public class StructureMixin {
                                                   CallbackInfoReturnable<Boolean> cir)
     {
         if(StructureFloaters.SF_CONFIG.removeWorldBottomPieces &&
+            !world.getClass().getSimpleName().contains("SchematicWorld") &&
+            !world.getClass().getSimpleName().contains("PonderWorld") &&
             world.toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= world.toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
         {
             if(pos.getY() <= world.getBottomY())

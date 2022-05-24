@@ -9,6 +9,7 @@ buildscript {
 
 plugins {
 	id 'fabric-loom' version '0.10-SNAPSHOT'
+	id "net.darkhax.curseforgegradle" version "1.0.7"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -49,8 +50,6 @@ dependencies {
 	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 }
 
-apply from: 'gradle/processresources.gradle'
-
 tasks.withType(JavaCompile).configureEach {
 	it.options.encoding = "UTF-8"
 	it.options.release = 17
@@ -64,7 +63,19 @@ jar {
 	from "LICENSE"
 }
 
-apply from: 'gradle/curseforge.gradle'
+task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+	apiToken = "$System.env.CURSEFORGEKEY"
+	int projectId = 535399
+	String changelogText = new File("CHANGELOG.md").getText('UTF-8')
+
+	def mainFile = upload(projectId, remapJar)
+	mainFile.changelog = changelogText
+	mainFile.changelogType = "markdown"
+	mainFile.releaseType = "release"
+	mainFile.displayName = "Structure Floaters Fabric v${project.mod_version} (${project.minecraft_version} MC)"
+	mainFile.addRequirement("cloth-config")
+	mainFile.addRequirement("fabric-api")
+}
 
 task buildAndRelease{}
-tasks.buildAndRelease.dependsOn(tasks.build, tasks.curseforge)
+tasks.buildAndRelease.dependsOn(tasks.build, tasks.publishCurseForge)
