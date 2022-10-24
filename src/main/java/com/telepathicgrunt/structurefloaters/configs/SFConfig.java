@@ -53,4 +53,13 @@ public class SFConfig implements ConfigData {
              Think villages where each house is separate from each other and can be at different heights.
             """)
     public String configuredStructuresToRaiseEachPieceSeparately = "minecraft:village_taiga,minecraft:village_savanna,minecraft:village_desert,minecraft:village_plains,minecraft:village_snowy,minecraft:pillager_outpost";
+
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.Gui.Tooltip(count = 0)
+    @Comment(value = """
+             Overrides the snapStructureToHeight to the specified y value here. State structure name, space, then y value for it. Add comma after y value for next entry.
+             Example:
+             "minecraft:village_taiga 50, minecraft:village_desert 70, minecraft:village_snowy 20"
+            """)
+    public String yValueOverridePerStructure = "minecraft:village_taiga 50, minecraft:village_desert 70, minecraft:village_snowy 20";
 }

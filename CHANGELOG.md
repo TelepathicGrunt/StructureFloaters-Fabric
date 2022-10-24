@@ -1,3 +1,9 @@
+### **(V.3.0.3 Changes) (1.18.2 Minecraft)**
+
+##### Config:
+yValueOverridePerStructure config added.
+
+
 ### **(V.3.0.2 Changes) (1.18.2 Minecraft)**
 
 ##### Mod Compat:

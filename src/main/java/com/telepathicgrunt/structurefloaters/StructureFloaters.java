@@ -20,7 +20,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,19 +75,35 @@ public class StructureFloaters implements ModInitializer {
 		}
 
 		boolean raisePiecesSeparately = STRUCTURES_TO_RAISE_PIECES_INDIVIDUALLY.contains(structureID);
+		int targetYValue = StructureFloaters.SF_CONFIG.snapStructureToHeight;
+
+		String config = StructureFloaters.SF_CONFIG.yValueOverridePerStructure;
+		Map<String, Integer> overrideY = new HashMap<>();
+		for(String entry : config.trim().split(",")) {
+			String[] pair = entry.trim().split(" ");
+			if (pair.length > 1) {
+				overrideY.put(pair[0], Integer.parseInt(pair[1]));
+			}
+		}
+
+		if (structureID != null && overrideY.containsKey(structureID.toString())) {
+			targetYValue = overrideY.get(structureID.toString());
+		}
+
+		int finalTargetYValue = targetYValue;
 		minY.ifPresent(y -> {
-			if(y < StructureFloaters.SF_CONFIG.snapStructureToHeight) {
+			if(y < finalTargetYValue) {
 				structureStart.getChildren().forEach(piece -> {
 					if(raisePiecesSeparately) {
-						if(piece.getBoundingBox().getMinY() <= StructureFloaters.SF_CONFIG.snapStructureToHeight) {
-							piece.translate(0, StructureFloaters.SF_CONFIG.snapStructureToHeight - piece.getBoundingBox().getMinY(), 0);
+						if(piece.getBoundingBox().getMinY() <= finalTargetYValue) {
+							piece.translate(0, finalTargetYValue - piece.getBoundingBox().getMinY(), 0);
 							if(piece instanceof PoolStructurePiece poolStructurePiece) {
 								poolStructurePiece.getPoolElement().setProjection(StructurePool.Projection.RIGID);
 							}
 						}
 					}
 					else {
-						piece.translate(0, StructureFloaters.SF_CONFIG.snapStructureToHeight - y, 0);
+						piece.translate(0, finalTargetYValue - y, 0);
 					}
 				});
 			}
