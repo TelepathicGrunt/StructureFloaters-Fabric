@@ -6,7 +6,6 @@ import net.minecraft.structure.SimpleStructurePiece;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructurePieceType;
 import net.minecraft.structure.StructurePlacementData;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +16,6 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.feature.OceanRuinFeature;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,13 +26,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Mixin(OceanRuinGenerator.Piece.class)
 public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece {
 
     @Unique
-    private static final Identifier OCEAN_RUINS_ID = new Identifier("minecraft:ocean_ruin");
+    private static final Identifier SF_OCEAN_RUINS_ID = new Identifier("minecraft:ocean_ruin");
+
+    @Unique
+    private static final Pattern SF_PATTERN = Pattern.compile("minecraft:ocean_ruin (\\d+)");
 
     public OceanRuinGeneratorPieceMixin(StructurePieceType type, int i, StructureManager structureManager, Identifier identifier, String string, StructurePlacementData placementData, BlockPos pos) {
         super(type, i, structureManager, identifier, string, placementData, pos);
@@ -54,7 +58,7 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
                                                    ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox,
                                                    ChunkPos chunkPos, BlockPos pos, CallbackInfo ci, int heightmapY)
     {
-        if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(OCEAN_RUINS_ID) &&
+        if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SF_OCEAN_RUINS_ID) &&
                 StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
                 heightmapY <= world.getBottomY() + 1)
@@ -75,13 +79,18 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
     private int structurefloaters_setHeightmapSnap(int heightmapY, StructureWorldAccess world,
                                                    StructureAccessor structureAccessor, ChunkGenerator chunkGenerator)
     {
-        if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(OCEAN_RUINS_ID) &&
+        if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SF_OCEAN_RUINS_ID) &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
             !(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
-                    world.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY() + 1) &&
-            heightmapY < StructureFloaters.SF_CONFIG.snapStructureToHeight)
+                world.getTopY(Heightmap.Type.OCEAN_FLOOR_WG, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY() + 1))
         {
-            return StructureFloaters.SF_CONFIG.snapStructureToHeight;
+            AtomicInteger targetYValue = new AtomicInteger(StructureFloaters.SF_CONFIG.snapStructureToHeight);
+            Matcher matcher = SF_PATTERN.matcher(StructureFloaters.SF_CONFIG.yValueOverridePerStructure);
+            matcher.results().forEach(e -> targetYValue.set(Integer.parseInt(e.group(1))));
+
+            if (heightmapY < targetYValue.get()) {
+                return targetYValue.get();
+            }
         }
         return heightmapY;
     }
@@ -99,7 +108,7 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
                                                          CallbackInfoReturnable<Integer> cir,
                                                          int i, int j)
     {
-        if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(OCEAN_RUINS_ID) &&
+        if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SF_OCEAN_RUINS_ID) &&
             world instanceof ChunkRegion &&
             ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
         {
@@ -109,9 +118,15 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
                 // Force it to return work bottom so StructureMixin can yeet this ocean ruins piece as otherwise, it would hover a few blocks over world bottom.
                 cir.setReturnValue(world.getBottomY() - 1);
             }
-            else if(j < StructureFloaters.SF_CONFIG.snapStructureToHeight)
-            {
-                cir.setReturnValue(StructureFloaters.SF_CONFIG.snapStructureToHeight);
+            else {
+                AtomicInteger targetYValue = new AtomicInteger(StructureFloaters.SF_CONFIG.snapStructureToHeight);
+                Matcher matcher = SF_PATTERN.matcher(StructureFloaters.SF_CONFIG.yValueOverridePerStructure);
+                matcher.results().forEach(e -> targetYValue.set(Integer.parseInt(e.group(1))));
+
+                if(j < targetYValue.get())
+                {
+                    cir.setReturnValue(targetYValue.intValue());
+                }
             }
         }
     }

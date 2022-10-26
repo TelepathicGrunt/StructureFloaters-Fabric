@@ -29,6 +29,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Mixin(ShipwreckGenerator.Piece.class)
@@ -36,6 +39,9 @@ public abstract class ShipwreckGeneratorPieceMixin extends SimpleStructurePiece 
 
     @Unique
     private static final Identifier SHIPWRECK_ID = new Identifier("minecraft:shipwreck");
+
+    @Unique
+    private static final Pattern SF_PATTERN = Pattern.compile("minecraft:shipwreck (\\d+)");
 
     @Final
     @Shadow
@@ -85,10 +91,15 @@ public abstract class ShipwreckGeneratorPieceMixin extends SimpleStructurePiece 
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
                 !(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
-                world.getTopY(type, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY() + 1) &&
-                heightmapY < StructureFloaters.SF_CONFIG.snapStructureToHeight)
+                world.getTopY(type, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY() + 1))
         {
-            return StructureFloaters.SF_CONFIG.snapStructureToHeight;
+            AtomicInteger targetYValue = new AtomicInteger(StructureFloaters.SF_CONFIG.snapStructureToHeight);
+            Matcher matcher = SF_PATTERN.matcher(StructureFloaters.SF_CONFIG.yValueOverridePerStructure);
+            matcher.results().forEach(e -> targetYValue.set(Integer.parseInt(e.group(1))));
+
+            if (heightmapY < targetYValue.get()) {
+                return targetYValue.get();
+            }
         }
         return heightmapY;
     }
@@ -127,17 +138,24 @@ public abstract class ShipwreckGeneratorPieceMixin extends SimpleStructurePiece 
             at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/StructureWorldAccess;getTopY(Lnet/minecraft/world/Heightmap$Type;II)I", ordinal = 1),
             ordinal = 3
     )
-    private int structurefloaters_setHeightmapSnap2(int heightmapY, StructureWorldAccess world,
-                                              StructureAccessor structureAccessor, ChunkGenerator chunkGenerator)
+    private int structurefloaters_setHeightmapSnap2(int heightmapY,
+                                                    StructureWorldAccess world,
+                                                    StructureAccessor structureAccessor,
+                                                    ChunkGenerator chunkGenerator)
     {
         Heightmap.Type type = this.grounded ? Heightmap.Type.WORLD_SURFACE_WG : Heightmap.Type.OCEAN_FLOOR_WG;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
                 !(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
-                        world.getTopY(type, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY() + 1) &&
-                heightmapY < StructureFloaters.SF_CONFIG.snapStructureToHeight)
+                        world.getTopY(type, this.pos.getX(), this.pos.getZ()) <= chunkGenerator.getMinimumY() + 1))
         {
-            return StructureFloaters.SF_CONFIG.snapStructureToHeight;
+            AtomicInteger targetYValue = new AtomicInteger(StructureFloaters.SF_CONFIG.snapStructureToHeight);
+            Matcher matcher = SF_PATTERN.matcher(StructureFloaters.SF_CONFIG.yValueOverridePerStructure);
+            matcher.results().forEach(e -> targetYValue.set(Integer.parseInt(e.group(1))));
+
+            if (heightmapY < targetYValue.get()) {
+                return targetYValue.get();
+            }
         }
         return heightmapY;
     }

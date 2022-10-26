@@ -61,5 +61,5 @@ public class SFConfig implements ConfigData {
              Example:
              "minecraft:village_taiga 50, minecraft:village_desert 70, minecraft:village_snowy 20"
             """)
-    public String yValueOverridePerStructure = "minecraft:village_taiga 50, minecraft:village_desert 70, minecraft:village_snowy 20";
+    public String yValueOverridePerStructure = "";
 }

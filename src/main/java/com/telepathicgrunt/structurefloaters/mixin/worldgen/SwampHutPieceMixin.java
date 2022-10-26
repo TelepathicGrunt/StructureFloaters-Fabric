@@ -17,13 +17,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Mixin(SwampHutGenerator.class)
 public abstract class SwampHutPieceMixin {
 
-
     @Unique
     private static final Identifier WITCH_HUT_ID = new Identifier("minecraft:swamp_hut");
+
+    @Unique
+    private static final Pattern SF_PATTERN = Pattern.compile("minecraft:swamp_hut (\\d+)");
 
     /**
      * @author TelepathicGrunt
@@ -37,10 +42,15 @@ public abstract class SwampHutPieceMixin {
     private void structurefloaters_fixedYHeight(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox chunkBox, ChunkPos chunkPos, BlockPos pos, CallbackInfo ci) {
         BlockBox box = ((SwampHutGenerator)(Object)this).getBoundingBox();
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(WITCH_HUT_ID) &&
-                chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
-                box.getMinY() < StructureFloaters.SF_CONFIG.snapStructureToHeight)
+            chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY())
         {
-            box.move(0, StructureFloaters.SF_CONFIG.snapStructureToHeight - box.getMinY(), 0);
+            AtomicInteger targetYValue = new AtomicInteger(StructureFloaters.SF_CONFIG.snapStructureToHeight);
+            Matcher matcher = SF_PATTERN.matcher(StructureFloaters.SF_CONFIG.yValueOverridePerStructure);
+            matcher.results().forEach(e -> targetYValue.set(Integer.parseInt(e.group(1))));
+
+            if (box.getMinY() < targetYValue.get()) {
+                box.move(0, targetYValue.get() - box.getMinY(), 0);
+            }
         }
     }
 }

@@ -1,3 +1,9 @@
+### **(V.3.0.4 Changes) (1.18.2 Minecraft)**
+
+##### Config:
+Fixed yValueOverridePerStructure config not applying to some vanilla structures.
+
+
 ### **(V.3.0.3 Changes) (1.18.2 Minecraft)**
 
 ##### Config:
