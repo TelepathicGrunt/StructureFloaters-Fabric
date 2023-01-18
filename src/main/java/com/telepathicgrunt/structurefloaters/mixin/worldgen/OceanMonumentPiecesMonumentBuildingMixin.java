@@ -1,9 +1,14 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.OceanMonumentPiecesUtils;
+import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.structure.OceanMonumentGenerator;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,6 +30,8 @@ public abstract class OceanMonumentPiecesMonumentBuildingMixin {
             at = @At(value = "STORE", ordinal = 0), ordinal = 0
     )
     private int structurefloaters_noWater(int i, StructureWorldAccess world, StructureAccessor structureManager, ChunkGenerator chunkGenerator, Random random, BlockBox mutableBoundingBox) {
+
+        if (GeneralUtils.isWorldDisallowed(world)) return i;
         if(chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY()){
             // Places water correctly that conforms to the monument's shape
             OceanMonumentPiecesUtils.generateWaterBox(world, chunkGenerator, ((OceanMonumentGenerator.Base)(Object)this), mutableBoundingBox);

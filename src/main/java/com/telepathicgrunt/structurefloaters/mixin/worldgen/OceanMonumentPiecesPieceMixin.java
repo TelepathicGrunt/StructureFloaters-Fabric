@@ -1,7 +1,12 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
+import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,6 +20,8 @@ public abstract class OceanMonumentPiecesPieceMixin {
             at = @At(value = "HEAD"), cancellable = true
     )
     private void structurefloaters_noWater(StructureWorldAccess world, BlockBox boundingBoxIn, int x1, int y1, int z1, int x2, int y2, int z2, CallbackInfo ci) {
+
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         if(world.toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= world.toServerWorld().getChunkManager().getChunkGenerator().getMinimumY()){
             if(Math.abs(x1 - x2) > 6 || Math.abs(y1 - y2) > 6 || Math.abs(z1 - z2) > 6){
                 // prevent the terrain carving with liquids everywhere

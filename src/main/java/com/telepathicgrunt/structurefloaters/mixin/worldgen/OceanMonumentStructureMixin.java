@@ -1,7 +1,10 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
+import com.telepathicgrunt.structurefloaters.StructureFloaters;
 import net.minecraft.structure.StructureGeneratorFactory;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.OceanMonumentFeature;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,6 +27,7 @@ public class OceanMonumentStructureMixin {
     )
     private static void structurefloaters_skipCategoryChecks(StructureGeneratorFactory.Context<DefaultFeatureConfig> context, CallbackInfoReturnable<Boolean> cir)
     {
+        if (GeneralUtils.isWorldDisallowed(context.world())) return;
         if(context.chunkGenerator().getSeaLevel() <= context.chunkGenerator().getMinimumY() && context.isBiomeValid(Heightmap.Type.OCEAN_FLOOR_WG)){
             cir.setReturnValue(true);
         }

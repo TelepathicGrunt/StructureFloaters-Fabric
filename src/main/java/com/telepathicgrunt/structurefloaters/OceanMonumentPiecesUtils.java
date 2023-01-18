@@ -1,5 +1,6 @@
 package com.telepathicgrunt.structurefloaters;
 
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import com.telepathicgrunt.structurefloaters.mixin.worldgen.StructurePieceAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -8,11 +9,15 @@ import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 public class OceanMonumentPiecesUtils {
     // called in structures/OceanMonumentPiecesMonumentBuildingMixin
     public static void generateWaterBox(StructureWorldAccess world, ChunkGenerator chunkGenerator, OceanMonumentGenerator.Base monument, BlockBox mutableBoundingBox) {
+
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         BlockState water = Blocks.WATER.getDefaultState();
         BlockState prismarineDark = Blocks.DARK_PRISMARINE.getDefaultState();
         BlockState prismarineBricks = Blocks.PRISMARINE_BRICKS.getDefaultState();

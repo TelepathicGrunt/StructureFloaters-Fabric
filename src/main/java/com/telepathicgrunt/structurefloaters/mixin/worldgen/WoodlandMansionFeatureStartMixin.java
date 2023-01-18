@@ -2,12 +2,15 @@ package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
 import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import com.telepathicgrunt.structurefloaters.mixin.Vec3iAccessor;
 import net.minecraft.structure.StructurePiecesList;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.WoodlandMansionFeature;
@@ -36,6 +39,7 @@ public abstract class WoodlandMansionFeatureStartMixin {
                                                        ChunkPos chunkPos, StructurePiecesList children, CallbackInfo ci,
                                                        BlockPos.Mutable mutable, int worldBottom, BlockBox blockBox,
                                                        int minBBY, int x, int z) {
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         if(StructureFloaters.SF_CONFIG.removeStructurePillars &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
             GeneralUtils.getFirstLandYFromPos(world, new BlockPos(x, minBBY - 1, z), GeneralUtils::isReplaceableByMansions) <= worldBottom + 1)

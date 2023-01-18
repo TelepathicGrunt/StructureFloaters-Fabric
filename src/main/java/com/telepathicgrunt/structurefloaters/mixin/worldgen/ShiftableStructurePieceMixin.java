@@ -1,6 +1,8 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.structure.ShiftableStructurePiece;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructurePieceType;
@@ -10,7 +12,9 @@ import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -38,6 +42,7 @@ public abstract class ShiftableStructurePieceMixin extends StructurePiece {
     private void structurefloaters_disableHeightmapSnap(WorldAccess world, BlockBox boundingBox, int height, CallbackInfoReturnable<Boolean> cir,
                                                    int j, int k, BlockPos.Mutable mutable)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         if(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 world instanceof ChunkRegion &&
                 ((ChunkRegion)world).toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= ((ChunkRegion)world).toServerWorld().getChunkManager().getChunkGenerator().getMinimumY() &&
@@ -57,6 +62,7 @@ public abstract class ShiftableStructurePieceMixin extends StructurePiece {
             index = 3)
     private int structurefloaters_setHeightmapSnap(int heightmapY, WorldAccess world)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return heightmapY;
         if(!StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 world instanceof ChunkRegion &&
                 ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getMinimumY() &&

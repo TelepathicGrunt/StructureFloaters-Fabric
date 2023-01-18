@@ -57,6 +57,13 @@ public class SFConfig implements ConfigData {
     @ConfigEntry.Gui.PrefixText
     @ConfigEntry.Gui.Tooltip(count = 0)
     @Comment(value = """
+             Dimensions to not apply structure floaters to
+            """)
+    public String dimensionsDisallowed = "twilightforest:twilight_forest";
+
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.Gui.Tooltip(count = 0)
+    @Comment(value = """
              Overrides the snapStructureToHeight to the specified y value here. State structure name, space, then y value for it. Add comma after y value for next entry.
              Example:
              "minecraft:village_taiga 50, minecraft:village_desert 70, minecraft:village_snowy 20"

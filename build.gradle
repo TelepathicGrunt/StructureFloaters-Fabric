@@ -49,6 +49,7 @@ dependencies {
 
 	modImplementation "com.terraformersmc:modmenu:${project.mod_menu_version}"
 	modRuntimeOnly "curse.maven:stoneholm-461822:3614629"
+	//modRuntimeOnly "curse.maven:the_twilight_forest-227639:4194259"
 }
 
 tasks.withType(JavaCompile).configureEach {

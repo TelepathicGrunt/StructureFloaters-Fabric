@@ -1,9 +1,13 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.structure.processor.GravityStructureProcessor;
 import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -23,6 +27,8 @@ public class GravityStructureProcessorMixin {
     )
     private int structurefloaters_floatTerrainSnappers(int y, WorldView world)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return y;
+
         if(world instanceof ServerWorldAccess && ((ServerWorldAccess)world).toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= ((ServerWorldAccess)world).toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
         {
             if(y <= world.getBottomY())

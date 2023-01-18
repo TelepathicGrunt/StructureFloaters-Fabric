@@ -1,9 +1,13 @@
 package com.telepathicgrunt.structurefloaters;
 
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.HeightLimitView;
+import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.chunk.Chunk;
 
@@ -35,4 +39,17 @@ public class GeneralUtils {
         return blockState.isAir() || blockState.getMaterial().isLiquid();
     }
 
+    public static boolean isWorldDisallowed(HeightLimitView world) {
+        World castedWorld = null;
+        if (world instanceof Chunk chunk) {
+            HeightLimitView view = ((ChunkAccessor)chunk).getHeightLimitViewField();
+            if (view instanceof World chunkWorld) {
+                castedWorld = chunkWorld;
+            }
+        }
+        else if (world instanceof World rawWorld) {
+            castedWorld = rawWorld;
+        }
+        return castedWorld != null && StructureFloaters.DIMENSIONS_DISALLOWED.contains(castedWorld.getRegistryKey());
+    }
 }

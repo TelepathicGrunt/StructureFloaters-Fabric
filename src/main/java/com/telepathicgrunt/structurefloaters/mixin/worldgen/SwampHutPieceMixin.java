@@ -1,5 +1,6 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
 import net.minecraft.structure.SwampHutGenerator;
 import net.minecraft.util.Identifier;
@@ -7,6 +8,7 @@ import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,6 +42,8 @@ public abstract class SwampHutPieceMixin {
                     value = "INVOKE", ordinal = 0)
     )
     private void structurefloaters_fixedYHeight(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox chunkBox, ChunkPos chunkPos, BlockPos pos, CallbackInfo ci) {
+
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         BlockBox box = ((SwampHutGenerator)(Object)this).getBoundingBox();
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(WITCH_HUT_ID) &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY())

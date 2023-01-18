@@ -1,9 +1,13 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.structure.IglooGenerator;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,6 +36,8 @@ public abstract class IglooGeneratorPieceMixin {
     )
     private int structurefloaters_fixedYHeight(int y, StructureWorldAccess world, StructureAccessor structureManager, ChunkGenerator chunkGenerator)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return y;
+
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(new Identifier("minecraft:igloo")) &&
             world.toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= world.toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())
         {

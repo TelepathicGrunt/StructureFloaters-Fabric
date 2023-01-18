@@ -1,6 +1,8 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.structure.ShipwreckGenerator;
 import net.minecraft.structure.SimpleStructurePiece;
 import net.minecraft.structure.StructureManager;
@@ -14,6 +16,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Final;
@@ -66,6 +70,7 @@ public abstract class ShipwreckGeneratorPieceMixin extends SimpleStructurePiece 
                                                    ChunkPos chunkPos, BlockPos pos, CallbackInfo ci,
                                                    int i, int j)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
                 StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
@@ -87,6 +92,7 @@ public abstract class ShipwreckGeneratorPieceMixin extends SimpleStructurePiece 
     private int structurefloaters_setHeightmapSnap(int heightmapY, StructureWorldAccess world,
                                               StructureAccessor structureAccessor, ChunkGenerator chunkGenerator)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return heightmapY;
         Heightmap.Type type = this.grounded ? Heightmap.Type.WORLD_SURFACE_WG : Heightmap.Type.OCEAN_FLOOR_WG;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
@@ -119,6 +125,7 @@ public abstract class ShipwreckGeneratorPieceMixin extends SimpleStructurePiece 
                                                     int i, int j, Vec3i vec3i, Heightmap.Type type, int k, BlockPos blockPos,
                                                     Iterator<BlockPos> var14, BlockPos blockPos2, int l)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
                 StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
@@ -143,6 +150,7 @@ public abstract class ShipwreckGeneratorPieceMixin extends SimpleStructurePiece 
                                                     StructureAccessor structureAccessor,
                                                     ChunkGenerator chunkGenerator)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return heightmapY;
         Heightmap.Type type = this.grounded ? Heightmap.Type.WORLD_SURFACE_WG : Heightmap.Type.OCEAN_FLOOR_WG;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SHIPWRECK_ID) &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&

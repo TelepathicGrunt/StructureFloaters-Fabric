@@ -1,6 +1,8 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.structure.OceanRuinGenerator;
 import net.minecraft.structure.SimpleStructurePiece;
 import net.minecraft.structure.StructureManager;
@@ -14,6 +16,8 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Mixin;
@@ -58,6 +62,7 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
                                                    ChunkGenerator chunkGenerator, Random random, BlockBox boundingBox,
                                                    ChunkPos chunkPos, BlockPos pos, CallbackInfo ci, int heightmapY)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SF_OCEAN_RUINS_ID) &&
                 StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
                 chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
@@ -79,6 +84,7 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
     private int structurefloaters_setHeightmapSnap(int heightmapY, StructureWorldAccess world,
                                                    StructureAccessor structureAccessor, ChunkGenerator chunkGenerator)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return heightmapY;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SF_OCEAN_RUINS_ID) &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY() &&
             !(StructureFloaters.SF_CONFIG.removeStructuresOffIslands &&
@@ -108,6 +114,7 @@ public abstract class OceanRuinGeneratorPieceMixin extends SimpleStructurePiece 
                                                          CallbackInfoReturnable<Integer> cir,
                                                          int i, int j)
     {
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(SF_OCEAN_RUINS_ID) &&
             world instanceof ChunkRegion &&
             ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getSeaLevel() <= ((ChunkRegion) world).toServerWorld().getChunkManager().getChunkGenerator().getMinimumY())

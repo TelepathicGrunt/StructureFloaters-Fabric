@@ -45,6 +45,6 @@ public class ConfiguredStructureFeatureMixin {
                                                                                     StructurePiecesCollector structurePiecesCollector,
                                                                                     ChunkRandom chunkRandom, StructureStart structureStart)
     {
-        StructureFloaters.offsetStructurePieces(registryManager, structureStart, chunkGenerator);
+        StructureFloaters.offsetStructurePieces(registryManager, structureStart, chunkGenerator, world);
     }
 }

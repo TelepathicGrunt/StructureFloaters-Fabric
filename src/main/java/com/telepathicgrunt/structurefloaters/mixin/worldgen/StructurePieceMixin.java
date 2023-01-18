@@ -1,10 +1,14 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,6 +28,8 @@ public class StructurePieceMixin {
             cancellable = true
     )
     private void structurefloaters_disablePillars(StructureWorldAccess world, BlockState state, int x, int y, int z, BlockBox box, CallbackInfo ci) {
+
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         if(StructureFloaters.cancelPillars(world, ((StructurePiece)(Object)this), x, y, z)){
             ci.cancel();
         }

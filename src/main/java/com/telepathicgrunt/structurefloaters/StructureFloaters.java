@@ -1,10 +1,12 @@
 package com.telepathicgrunt.structurefloaters;
 
 import com.telepathicgrunt.structurefloaters.configs.SFConfig;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import com.telepathicgrunt.structurefloaters.mixin.worldgen.StructurePieceAccessor;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.PoolStructurePiece;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
@@ -13,7 +15,11 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.feature.StructureFeature;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +40,7 @@ public class StructureFloaters implements ModInitializer {
 	public static SFConfig SF_CONFIG;
 	public static Set<Identifier> STRUCTURES_TO_IGNORE;
 	public static Set<Identifier> STRUCTURES_TO_RAISE_PIECES_INDIVIDUALLY;
+	public static Set<RegistryKey<World>> DIMENSIONS_DISALLOWED;
 	//public static final WBDimensionOmegaConfigs omegaConfig = OmegaConfig.register(WBDimensionOmegaConfigs.class);
 
 	@Override
@@ -56,12 +63,22 @@ public class StructureFloaters implements ModInitializer {
 						.split(","))
 				.map(Identifier::new)
 				.collect(Collectors.toSet());
+
+		DIMENSIONS_DISALLOWED = Arrays.stream(SF_CONFIG.dimensionsDisallowed
+						.toLowerCase(Locale.ROOT)
+						.replace(" ", "")
+						.replace("	", "")
+						.split(","))
+				.map(s -> RegistryKey.of(Registry.WORLD_KEY, new Identifier(s)))
+				.collect(Collectors.toSet());
 	}
 
-	public static void offsetStructurePieces(DynamicRegistryManager registryManager, StructureStart structureStart, ChunkGenerator generator) {
+	public static void offsetStructurePieces(DynamicRegistryManager registryManager, StructureStart structureStart, ChunkGenerator generator, HeightLimitView world) {
 		if(structureStart.getFeature().feature == StructureFeature.MONUMENT) {
 			return;
 		}
+
+		if (GeneralUtils.isWorldDisallowed(world)) return;
 
 		Identifier structureID = registryManager.get(Registry.CONFIGURED_STRUCTURE_FEATURE_KEY).getId(structureStart.getFeature());
 		if(STRUCTURES_TO_IGNORE.contains(structureID)) {

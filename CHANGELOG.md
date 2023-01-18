@@ -1,3 +1,9 @@
+### **(V.3.0.5 Changes) (1.18.2 Minecraft)**
+
+##### Config:
+Added dimensionsDisallowed config option that disallows twilight forest by default
+
+
 ### **(V.3.0.4 Changes) (1.18.2 Minecraft)**
 
 ##### Config:

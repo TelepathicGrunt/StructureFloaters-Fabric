@@ -1,12 +1,16 @@
 package com.telepathicgrunt.structurefloaters.mixin.worldgen;
 
+import com.telepathicgrunt.structurefloaters.GeneralUtils;
 import com.telepathicgrunt.structurefloaters.StructureFloaters;
+import com.telepathicgrunt.structurefloaters.mixin.ChunkAccessor;
 import net.minecraft.structure.JungleTempleGenerator;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.StructureWorldAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,6 +41,8 @@ public abstract class JunglePyramidPieceMixin {
                     ordinal = 0)
     )
     private void structurefloaters_fixedYHeight(StructureWorldAccess world, StructureAccessor structureAccessor, ChunkGenerator chunkGenerator, Random random, BlockBox chunkBox, ChunkPos chunkPos, BlockPos pos, CallbackInfo ci) {
+
+        if (GeneralUtils.isWorldDisallowed(world)) return;
         BlockBox box = ((JungleTempleGenerator)(Object)this).getBoundingBox();
         if(!StructureFloaters.STRUCTURES_TO_IGNORE.contains(new Identifier("minecraft:jungle_pyramid")) &&
             chunkGenerator.getSeaLevel() <= chunkGenerator.getMinimumY())
